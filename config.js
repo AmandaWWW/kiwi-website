@@ -25,85 +25,11 @@ const siteData = {
         },
         {
             name: "GitHub",
-            url: "#",
+            url: "https://github.com/AmandaWWW",
             icon: "github",
             color: "#39FF14",
             glow: "rgba(57, 255, 20, 0.4)",
             svgPath: '<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>'
-        }
-    ],
-
-    // Timeline data
-    timeline: [
-        {
-            date: "2026.06",
-            title: "University Journey End",
-            description: "GPA 4.0/4.0, First Class Honours. Core Modules: Computational Neuroscience, Neural Informatics.",
-            side: "left",
-            tags: ["Education", "Graduation"]
-        },
-        {
-            date: "2024.09 - 2026.06",
-            title: "Roche Pharmaceutical Mentorship",
-            description: "Industry insights & career path guidance.",
-            side: "left",
-            tags: ["Mentorship", "Industry"]
-        },
-        {
-            date: "2022.09",
-            title: "University Journey Start",
-            description: "",
-            side: "left",
-            tags: ["Education"]
-        },
-        {
-            date: "2025.09",
-            title: "AI Product Intern",
-            description: "Led search strategy upgrade (35%->86% accuracy), Agent tool refactoring.",
-            side: "right",
-            tags: ["Internship", "AI", "Product"]
-        },
-        {
-            date: "2025.04",
-            title: "Horizon Four Captain",
-            description: "AI+ESG Strategy, Top 10% Award.",
-            side: "right",
-            tags: ["Competition", "Leadership"]
-        },
-        {
-            date: "2024.11",
-            title: "Dean's List",
-            description: "Top 5% academic achievement.",
-            side: "right",
-            tags: ["Award", "Academic"]
-        },
-        {
-            date: "2024.08",
-            title: "Burnstock Prize",
-            description: "Year 1 Top 1% achievement.",
-            side: "right",
-            tags: ["Award", "Top Achievement"]
-        },
-        {
-            date: "2024.06",
-            title: "Max Planck Institute Intern",
-            description: "Transcriptomics data pipeline, efficiency up 30%.",
-            side: "right",
-            tags: ["Internship", "Research"]
-        },
-        {
-            date: "2024.08",
-            title: "Grid Cell Model",
-            description: "Dissertation project on neural grid cells.",
-            side: "right",
-            tags: ["Project", "Research"]
-        },
-        {
-            date: "2023.09",
-            title: "Business Data Modeling",
-            description: "Commercial data analysis project.",
-            side: "right",
-            tags: ["Project", "Data Science"]
         }
     ],
 
@@ -168,6 +94,100 @@ const siteData = {
                 description: "Direct communication pathways between the brain and external devices.",
                 image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&auto=format&fit=crop&q=60"
             }
+        ],
+
+        timeline: [
+            {
+                date: "2026.06",
+                title: "University Journey End",
+                description: "UCL Neuroscience BSc. GPA 4.0/4.0, First Class Honours.",
+                side: "left",
+                tags: ["Education", "Graduation"]
+            },
+            {
+                date: "2025.09 - Present",
+                title: "Meituan - AI Product Intern",
+                description: "Led search strategy upgrade (35%->86% accuracy) & Search Agent eval system.",
+                side: "right",
+                tags: ["Internship", "AI Product"]
+            },
+            {
+                date: "2024.09 - 2025.06",
+                title: "Roche - Mentorship Mentee",
+                description: "One-on-one mentorship on healthcare career paths & industry trends.",
+                side: "right",
+                tags: ["Mentorship", "Bio-Tech"]
+            },
+            {
+                date: "2025.04 - 2025.05",
+                title: "Bain Cup - Team Captain",
+                description: "AI+ESG Strategy. Won 'Outstanding Case Report' (Top 10%).",
+                side: "right",
+                tags: ["Competition", "Strategy"]
+            },
+            {
+                date: "2024.08 - 2025.05",
+                title: "Grid Cell Comp-Model",
+                description: "Undergrad Dissertation. Systematic review of CAN & Oscillatory interference models.",
+                side: "left",
+                tags: ["Research", "Computational Neuro"]
+            },
+            {
+                date: "2024.11",
+                title: "Dean's List",
+                description: "Top 5% academic performance in Faculty of Life Sciences.",
+                side: "left",
+                tags: ["Award", "Academic"]
+            },
+            {
+                date: "2024.08",
+                title: "Burnstock's Prize",
+                description: "Year 1 Top 1 Student (Avg 78.6%) in Neuroscience.",
+                side: "left",
+                tags: ["Award", "Top Achievement"]
+            },
+            {
+                date: "2024.06 - 2024.09",
+                title: "MPIBR - Research Intern",
+                description: "Built Python pipeline for transcriptomics data, boosting efficiency by 30%.",
+                side: "right",
+                tags: ["Internship", "Research", "Coding"]
+            },
+            {
+                date: "2023.09 - 2023.12",
+                title: "Business Data Modeling",
+                description: "Built profit prediction models (GAM) with 72% explainability for retail optimization.",
+                side: "left",
+                tags: ["Project", "Data Science"]
+            },
+            {
+                date: "2023.07 - 2023.09",
+                title: "CIBR - Research Intern",
+                description: "Researched BCI commercialization & ECoG electrode design.",
+                side: "right",
+                tags: ["Internship", "BCI"]
+            },
+            {
+                date: "2023.05 - 2024.06",
+                title: "UCL Neuro Soc - Officer",
+                description: "Co-organized events with Parkinson's UK (200+ attendees).",
+                side: "right",
+                tags: ["Leadership", "Volunteering"]
+            },
+            {
+                date: "2022.09 - 2023.06",
+                title: "UCL Student Rep",
+                description: "Facilitated integration of Python into the year 2 curriculum.",
+                side: "right",
+                tags: ["Leadership", "Curriculum"]
+            },
+            {
+                date: "2022.09",
+                title: "University Journey Start",
+                description: "BSc Neuroscience at UCL.",
+                side: "left",
+                tags: ["Education"]
+            }
         ]
     },
 
@@ -230,6 +250,100 @@ const siteData = {
                 label: "脑机接口",
                 description: "大脑与外部设备之间的直接通信通道。",
                 image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&auto=format&fit=crop&q=60"
+            }
+        ],
+
+       timeline: [
+            {
+                date: "2026.06",
+                title: "本科毕业",
+                description: "UCL 神经科学学士。GPA 4.0/4.0，一等荣誉学位。",
+                side: "left",
+                tags: ["教育", "毕业"]
+            },
+            {
+                date: "2025.09 - 至今",
+                title: "美团小美 - AI产品实习生",
+                description: "主导搜索策略升级（准确率35%->86%），搭建Search Agent评估体系。",
+                side: "right",
+                tags: ["实习", "AI产品"]
+            },
+            {
+                date: "2024.09 - 2025.06",
+                title: "罗氏制药 - 导师计划学员",
+                description: "接受行业专家辅导，深入洞察医疗健康领域职业路径。",
+                side: "right",
+                tags: ["导师计划", "生物科技"]
+            },
+            {
+                date: "2025.04 - 2025.05",
+                title: "贝恩杯案例大赛 - 队长",
+                description: "AI+ESG 增长战略。荣获“优秀案例报告”奖（前10%）。",
+                side: "right",
+                tags: ["竞赛", "战略分析"]
+            },
+            {
+                date: "2024.08 - 2025.05",
+                title: "网格细胞计算模型",
+                description: "本科毕业论文。系统综述CAN及振荡干涉模型在神经生理学中的应用。",
+                side: "left",
+                tags: ["研究", "计算神经"]
+            },
+            {
+                date: "2024.11",
+                title: "院长名单 (Dean's List)",
+                description: "因卓越学术表现入选生命科学院前5%名单。",
+                side: "left",
+                tags: ["奖项", "学术"]
+            },
+            {
+                date: "2024.08",
+                title: "Burnstock 专业第一名",
+                description: "以平均分78.6%的成绩获UCL神经科学专业年度第一。",
+                side: "left",
+                tags: ["奖项", "最高荣誉"]
+            },
+            {
+                date: "2024.06 - 2024.09",
+                title: "德国马普所 - 研究实习生",
+                description: "搭建转录组数据Python自动化管线，预处理效率提升30%。",
+                side: "right",
+                tags: ["实习", "科研", "代码"]
+            },
+            {
+                date: "2023.09 - 2023.12",
+                title: "商业数据建模项目",
+                description: "构建利润预测模型（GAM），解释力达72%，提供成本优化建议。",
+                side: "left",
+                tags: ["课内项目", "数据科学"]
+            },
+            {
+                date: "2023.07 - 2023.09",
+                title: "北京脑科所 - 研究实习生",
+                description: "参与ECoG电极设计流程及BCI商业化挑战研究。",
+                side: "right",
+                tags: ["实习", "脑机接口"]
+            },
+            {
+                date: "2023.05 - 2024.06",
+                title: "UCL神经科学学会 - 外联官",
+                description: "联合Parkinson's UK策划科普活动（200+参与者）。",
+                side: "right",
+                tags: ["社团", "领导力"]
+            },
+            {
+                date: "2022.09 - 2023.06",
+                title: "UCL 学生代表",
+                description: "成功推动Python课程纳入大二必修体系。",
+                side: "right",
+                tags: ["领导力", "课程改革"]
+            },
+            {
+                date: "2022.09",
+                title: "本科入学",
+                description: "伦敦大学学院 (UCL) 神经科学专业。",
+                side: "left",
+                tags: ["教育"]
             }
         ]
     }

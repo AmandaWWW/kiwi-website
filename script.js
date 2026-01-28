@@ -124,6 +124,9 @@ function renderContent(language) {
 
         // Initialize typewriter effect with new language (now uses correct currentLanguage)
         initializeTypewriter();
+
+        // Force update the timeline immediately when language changes
+        renderTimeline();
     } catch (error) {
         console.error('Error rendering content:', error);
     }
@@ -260,6 +263,12 @@ function switchToView(viewName) {
             // Render timeline if not already rendered
             renderTimeline();
             addBackButton();
+
+            // Morph social section to minimized toolbar
+            const socialSection = document.getElementById('socialSection');
+            if (socialSection) {
+                socialSection.classList.add('minimized');
+            }
         } else if (viewName === 'home') {
             console.log('Switching to Home view');
             // Switch to Home view
@@ -271,6 +280,12 @@ function switchToView(viewName) {
 
             // Remove back button
             removeBackButton();
+
+            // Restore social section to full cards
+            const socialSection = document.getElementById('socialSection');
+            if (socialSection) {
+                socialSection.classList.remove('minimized');
+            }
         } else {
             console.warn('Unknown view name:', viewName);
         }
@@ -320,7 +335,6 @@ function showCriticalError(title, message) {
 function renderTimeline() {
     const timelineContainer = document.getElementById('timelineContainer');
 
-    // Defensive check for container existence
     if (!timelineContainer) {
         console.error("Timeline container not found!");
         return;
@@ -328,56 +342,45 @@ function renderTimeline() {
 
     console.log("Rendering timeline...");
 
-    // Force clear the container to remove any comments or previous content
     timelineContainer.innerHTML = '';
 
-    // Create timeline structure
     const timeline = document.createElement('div');
     timeline.className = 'timeline';
 
-    // Helper function to parse dates, handling both single dates and ranges
     const getDate = (dateStr) => {
-        if (!dateStr) return new Date(0); // Handle empty dates
+        if (!dateStr) return new Date(0);
 
-        // Take the first part of a range (e.g., "2024.09" from "2024.09 - 2026.06")
         const cleanDate = dateStr.split(' - ')[0];
-
-        // Replace dots with hyphens for better browser compatibility (2024.09 -> 2024-09)
         const normalizedDate = cleanDate.replace(/\./g, '-');
-
         const parsed = new Date(normalizedDate);
 
         if (isNaN(parsed.getTime())) {
             console.warn(`Invalid date: ${dateStr}, using current date`);
-            return new Date(); // Fallback to current date if parsing fails
+            return new Date();
         }
 
         return parsed;
     };
 
-    // Sort timeline data by date (most recent first)
-    const sortedTimeline = [...siteData.timeline].sort((a, b) => {
+    const timelineData = siteData[currentLanguage].timeline;
+    const sortedTimeline = [...timelineData].sort((a, b) => {
         const dateA = getDate(a.date);
         const dateB = getDate(b.date);
-        return dateB - dateA; // Most recent first
+        return dateB - dateA;
     });
 
     console.log(`Timeline sorted: ${sortedTimeline.length} items`);
 
-    // Generate timeline items
     sortedTimeline.forEach((item, index) => {
         const timelineItem = document.createElement('div');
         timelineItem.className = `timeline-item ${item.side}`;
 
-        // Create node
         const node = document.createElement('div');
         node.className = 'timeline-node';
 
-        // Create content
         const content = document.createElement('div');
         content.className = 'timeline-content';
 
-        // Add content details
         if (item.date) {
             const date = document.createElement('div');
             date.className = 'timeline-date';
@@ -397,7 +400,6 @@ function renderTimeline() {
             content.appendChild(description);
         }
 
-        // Add tags if present
         if (item.tags && item.tags.length > 0) {
             const tagsContainer = document.createElement('div');
             tagsContainer.className = 'timeline-tags';
@@ -416,11 +418,10 @@ function renderTimeline() {
         timelineItem.appendChild(content);
         timeline.appendChild(timelineItem);
 
-        console.log(`Added timeline item ${index + 1}: ${item.title}`);
+        console.log(`Added timeline item ${index + 1}: ${item.title} (${item.side})`);
     });
 
     timelineContainer.appendChild(timeline);
-
     console.log("Timeline rendering complete!");
 }
 
