@@ -44,7 +44,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.4);
             z-index: 0;
             pointer-events: none;
         }
@@ -62,6 +62,23 @@
             background-size: 50px 50px;
             pointer-events: none;
             z-index: 0;
+        }
+
+        /* Site Logo */
+        .site-logo {
+            position: fixed;
+            top: 25px;
+            left: 40px;
+            z-index: 1001;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            color: #aef740;
+            text-shadow: 0 0 10px rgba(174, 247, 64, 0.8),
+                         0 0 20px rgba(174, 247, 64, 0.4),
+                         0 0 30px rgba(174, 247, 64, 0.2);
+            letter-spacing: 2px;
+            pointer-events: none;
         }
 
         /* Navigation */
@@ -662,6 +679,10 @@
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
+            .site-logo {
+                display: none;
+            }
+
             .timeline::before {
                 left: 20px;
             }
@@ -1088,6 +1109,9 @@
 <body>
     <!-- Grid Background -->
     <div class="grid-background"></div>
+
+    <!-- Site Logo -->
+    <div class="site-logo">KIWI's SPACE</div>
 
     <!-- Navigation -->
     <nav class="navigation">
