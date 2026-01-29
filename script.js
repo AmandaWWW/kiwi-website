@@ -1,5 +1,6 @@
 // Language state
 let currentLanguage = 'en';
+let chatHistory = [];
 
 // Initialize the page with data from config.js
 function initializePage() {
@@ -38,6 +39,9 @@ function initializePage() {
 
         // Setup language toggle
         setupLanguageToggle();
+
+        // Initialize chat interface
+        initializeChat();
     } catch (error) {
         console.error('Fatal error initializing page:', error);
         console.error('Error stack:', error.stack);
@@ -112,6 +116,9 @@ function renderContent(language) {
 
         // Update social links with new language
         renderSocialLinks(language);
+
+        // Update chat interface text with new language
+        updateChatText();
     } catch (error) {
         console.error('Error rendering content:', error);
     }
@@ -145,6 +152,191 @@ function renderSocialLinks(language) {
 
             socialSection.appendChild(socialCard);
         });
+    }
+}
+
+// Initialize Chat Interface
+function initializeChat() {
+    const avatar = document.getElementById('heroAvatar');
+    const chatDrawer = document.getElementById('chatDrawer');
+    const chatClose = document.getElementById('chatClose');
+    const chatSend = document.getElementById('chatSend');
+    const chatInput = document.getElementById('chatInput');
+
+    // Avatar click to open chat
+    if (avatar) {
+        avatar.addEventListener('click', () => {
+            chatDrawer.classList.add('open');
+        });
+    }
+
+    // Close button
+    if (chatClose) {
+        chatClose.addEventListener('click', () => {
+            chatDrawer.classList.remove('open');
+        });
+    }
+
+    // Send message functions
+    const sendMessage = async () => {
+        const message = chatInput.value.trim();
+        if (message) {
+            // 1. Show user message
+            addMessage(message, 'user');
+            chatInput.value = '';
+
+            // 2. Show typing indicator
+            showTypingIndicator();
+
+            // 3. Await the real API response
+            const response = await generateAIResponse(message);
+
+            // 4. Hide indicator and show AI response
+            hideTypingIndicator();
+            addMessage(response, 'bot');
+        }
+    };
+
+    // Send button click
+    if (chatSend) {
+        chatSend.addEventListener('click', sendMessage);
+    }
+
+    // Enter key to send
+    if (chatInput) {
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    }
+
+    // Update chat text with language
+    updateChatText();
+}
+
+// Add message to chat
+function addMessage(text, type) {
+    const chatMessages = document.getElementById('chatMessages');
+    if (!chatMessages) return;
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}-message`;
+
+    const messageText = document.createElement('span');
+    messageText.className = 'message-text';
+    messageText.textContent = text;
+
+    messageDiv.appendChild(messageText);
+    chatMessages.appendChild(messageDiv);
+
+    // Scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Show typing indicator
+function showTypingIndicator() {
+    const chatMessages = document.getElementById('chatMessages');
+    if (!chatMessages) return;
+
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'typing-indicator';
+    typingDiv.id = 'typingIndicator';
+    typingDiv.innerHTML = `
+        <span></span>
+        <span></span>
+        <span></span>
+    `;
+
+    chatMessages.appendChild(typingDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Hide typing indicator
+function hideTypingIndicator() {
+    const typingIndicator = document.getElementById('typingIndicator');
+    if (typingIndicator) {
+        typingIndicator.remove();
+    }
+}
+
+// Generate AI response by calling the backend API
+async function generateAIResponse(userMessage) {
+    // 1. Initialize System Prompt if history is empty
+    if (chatHistory.length === 0) {
+        // Safely access system prompt or fallback
+        const systemPrompt = (typeof siteData !== 'undefined' && siteData.aiConfig?.systemPrompt)
+            ? siteData.aiConfig.systemPrompt
+            : "You are a helpful assistant.";
+        chatHistory.push({ role: "system", content: systemPrompt });
+    }
+
+    // 2. Add user message to history
+    chatHistory.push({ role: "user", content: userMessage });
+
+    try {
+        // 3. Call the Vercel Backend (The "Bodyguard")
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ messages: chatHistory })
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        const aiText = data.result;
+
+        // 4. Add AI response to history (maintain context)
+        chatHistory.push({ role: "assistant", content: aiText });
+
+        return aiText;
+
+    } catch (error) {
+        console.error("Chat Error:", error);
+        // Remove the failed user message to prevent context corruption
+        chatHistory.pop();
+        return "⚠️ 连接神经中枢失败 (Connection Error)。请检查网络或稍后再试。";
+    }
+}
+
+// Update chat text based on current language
+function updateChatText() {
+    const chatData = siteData[currentLanguage]?.chat;
+    if (!chatData) return;
+
+    // Update hover prompt
+    const hoverPrompt = document.getElementById('avatarHoverPrompt');
+    if (hoverPrompt) {
+        hoverPrompt.textContent = chatData.hoverPrompt;
+    }
+
+    // Update chat title
+    const chatTitle = document.getElementById('chatTitle');
+    if (chatTitle) {
+        chatTitle.textContent = chatData.windowTitle;
+    }
+
+    // Update welcome message if it's the only message
+    const welcomeMessage = document.getElementById('welcomeMessage');
+    if (welcomeMessage && document.querySelectorAll('.message').length === 1) {
+        welcomeMessage.textContent = chatData.welcomeMessage;
+    }
+
+    // Update input placeholder
+    const chatInput = document.getElementById('chatInput');
+    if (chatInput) {
+        chatInput.placeholder = chatData.placeholder;
+    }
+
+    // Update send button
+    const chatSend = document.getElementById('chatSend');
+    if (chatSend) {
+        chatSend.textContent = chatData.send;
     }
 }
 

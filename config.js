@@ -33,6 +33,9 @@ const siteData = {
         }
     ],
 
+    // AI Configuration
+    aiConfig: AI_PROMPTS,
+
     // Language-specific content
     en: {
         introText: [
@@ -49,6 +52,14 @@ const siteData = {
         ],
 
         backButtonText: "← Back to Home",
+
+        chat: {
+            hoverPrompt: "Say Hi to Kiwi 👋",
+            windowTitle: "KIWI // LINK",
+            welcomeMessage: "Hello! I'm Kiwi's digital twin. Accessing memory banks... Ask me about my projects or background!",
+            placeholder: "Type a message...",
+            send: "SEND"
+        },
 
         tags: [
             {
@@ -208,6 +219,14 @@ const siteData = {
         ],
 
         backButtonText: "← 返回首页",
+
+        chat: {
+            hoverPrompt: "快来和Kiwi打个招呼 👋",
+            windowTitle: "KIWI // 神经链接",
+            welcomeMessage: "你好！我是Kiwi的数字分身。正在读取记忆库... 你可以问我任何关于项目或经历的问题！",
+            placeholder: "输入指令...",
+            send: "发送"
+        },
 
         tags: [
             {
