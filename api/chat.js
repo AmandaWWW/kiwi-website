@@ -10,39 +10,27 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Invalid message format' });
     }
 
-    // 3. API Key Security (The "Bodyguard")
-    const apiKey = process.env.ZHIPU_API_KEY;
+    // 3. API Key Security (Prefer DashScope, fallback to Zhipu)
+    const apiKey = process.env.DASHSCOPE_API_KEY || process.env.ZHIPU_API_KEY;
     if (!apiKey) {
-        console.error('Error: ZHIPU_API_KEY is missing in Vercel Environment Variables');
+        console.error('Error: DASHSCOPE_API_KEY and ZHIPU_API_KEY are both missing in Vercel Environment Variables');
         return res.status(500).json({ error: 'Server configuration error' });
     }
 
     try {
-        const knowledgeId = process.env.ZHIPU_KNOWLEDGE_ID;
-
-        // 1. Construct the request payload dynamically
+        // 1. Construct Payload (Standard OpenAI format for Alibaba)
         const requestPayload = {
-            model: "glm-4.7-flash", // STRICTLY using user-defined model name
+            model: "deepseek-v3",
             messages: messages,
             stream: true,
-            temperature: 0.7,
-            top_p: 0.7
+            temperature: 0.7
+            // Note: RAG/Tools temporarily disabled for provider switch
         };
 
-        // 2. Inject Knowledge Base Tool if ID is available in Env
-        if (knowledgeId) {
-            console.log("RAG Enabled. Using Knowledge ID:", knowledgeId);
-            requestPayload.tools = [{
-                type: "retrieval",
-                retrieval: {
-                    "knowledge_id": knowledgeId,
-                    "prompt_template": "请参考以下文档内容：\n{{knowledge}}\n\n请结合文档内容和System Prompt的人设回答用户：\n{{question}}"
-                }
-            }];
-        }
+        console.log("Connecting to Alibaba Cloud Deepseek...");
 
-        // 3. Send request to Zhipu
-        const response = await fetch("https://open.bigmodel.cn/api/paas/v4/chat/completions", {
+        // 2. Send Request to Alibaba Endpoint
+        const response = await fetch("https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -51,18 +39,14 @@ export default async function handler(req, res) {
             body: JSON.stringify(requestPayload)
         });
 
-        // 4. Handle Zhipu API errors (Log detailed error if 400/500)
+        // 3. Handle Alibaba API errors
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            console.error("Zhipu API Error:", errorData);
-            // Return specific error if model name is invalid
-            if (errorData.error?.code === "1214" || response.status === 400) {
-                return res.status(400).json({ error: 'Model name invalid or bad request' });
-            }
-            return res.status(502).json({ error: 'Failed to communicate with AI provider' });
+            console.error("Alibaba API Error:", errorData);
+            return res.status(response.status).json({ error: errorData.message || 'Provider Error' });
         }
 
-        // 5. Setup Streaming Response (Standard Vercel/Node stream)
+        // 4. Setup Streaming Response (Standard SSE)
         res.writeHead(200, {
             'Content-Type': 'text/plain; charset=utf-8',
             'Transfer-Encoding': 'chunked'

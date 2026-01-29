@@ -719,13 +719,30 @@ function getEllipticalBoundaries() {
     const innerRadiusX = window.innerWidth * 0.15;   // 15% of screen width
     const innerRadiusY = window.innerHeight * 0.2;   // 20% of screen height
 
+    // --- NEW LOGIC: Typewriter Box Protection ---
+    const typewriter = document.getElementById('typewriterContainer');
+    let typewriterBox = null;
+
+    if (typewriter) {
+        const rect = typewriter.getBoundingClientRect();
+        // Add 20px buffer
+        typewriterBox = {
+            left: rect.left - 20,
+            right: rect.right + 20,
+            top: rect.top - 20,
+            bottom: rect.bottom + 20
+        };
+    }
+    // --- NEW LOGIC END ---
+
     return {
         centerX,
         centerY,
         outerRadiusX,
         outerRadiusY,
         innerRadiusX,
-        innerRadiusY
+        innerRadiusY,
+        typewriterBox: typewriterBox // Return the box
     };
 }
 
@@ -940,23 +957,44 @@ class FloatingTag {
             // Check if tag is INSIDE inner ellipse (needs to be pushed out)
             const insideInner = isInsideEllipse(tagCenterX, tagCenterY, bounds.centerX, bounds.centerY, bounds.innerRadiusX, bounds.innerRadiusY);
 
-            if (outsideOuter || insideInner) {
+            // --- NEW LOGIC: Rectangular Typewriter Box Collision ---
+            let insideTypewriter = false;
+            if (bounds.typewriterBox) {
+                const box = bounds.typewriterBox;
+                // Check if tag bounds intersect with typewriter box (proper rectangle collision)
+                insideTypewriter = (
+                    newX < box.right &&
+                    newX + tagWidth > box.left &&
+                    newY < box.bottom &&
+                    newY + tagHeight > box.top
+                );
+            }
+            // --- NEW LOGIC END ---
+
+            if (outsideOuter || insideInner || insideTypewriter) {
                 collision = true;
 
-                // Determine which direction to reverse velocity based on tag position relative to center
-                const dx = tagCenterX - bounds.centerX;
-                const dy = tagCenterY - bounds.centerY;
-
-                // Calculate normalized position to understand which boundary was hit
-                const normalizedX = Math.abs(dx) / bounds.outerRadiusX;
-                const normalizedY = Math.abs(dy) / bounds.outerRadiusY;
-
-                if (normalizedX > normalizedY) {
-                    // Hit left/right boundary
+                if (insideTypewriter) {
+                    // Simple bounce for box collision
                     this.velocity.x *= -1;
-                } else {
-                    // Hit top/bottom boundary
                     this.velocity.y *= -1;
+                } else {
+                    // Existing ellipse bounce logic
+                    // Determine which direction to reverse velocity based on tag position relative to center
+                    const dx = tagCenterX - bounds.centerX;
+                    const dy = tagCenterY - bounds.centerY;
+
+                    // Calculate normalized position to understand which boundary was hit
+                    const normalizedX = Math.abs(dx) / bounds.outerRadiusX;
+                    const normalizedY = Math.abs(dy) / bounds.outerRadiusY;
+
+                    if (normalizedX > normalizedY) {
+                        // Hit left/right boundary
+                        this.velocity.x *= -1;
+                    } else {
+                        // Hit top/bottom boundary
+                        this.velocity.y *= -1;
+                    }
                 }
             }
 
