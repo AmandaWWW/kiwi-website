@@ -275,7 +275,6 @@ function hideTypingIndicator() {
 async function streamAIResponse(userMessage, onChunk) {
     // 1. Initialize System Prompt if history is empty
     if (chatHistory.length === 0) {
-        // Safely access system prompt or fallback
         const systemPrompt = (typeof siteData !== 'undefined' && siteData.aiConfig?.systemPrompt)
             ? siteData.aiConfig.systemPrompt
             : "You are a helpful assistant.";
@@ -286,32 +285,51 @@ async function streamAIResponse(userMessage, onChunk) {
     chatHistory.push({ role: "user", content: userMessage });
 
     try {
-        // 3. Call the Vercel Backend (The "Bodyguard")
+        // 3. Call the Backend
         const response = await fetch('/api/chat', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ messages: chatHistory })
         });
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
+        if (!response.ok) throw new Error('Network response was not ok');
 
         // 4. Stream Reader Setup
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
+        let buffer = '';
         let fullText = '';
 
         while (true) {
             const { done, value } = await reader.read();
             if (done) break;
 
-            // Decode chunk and trigger callback
-            const chunk = decoder.decode(value, { stream: true });
-            fullText += chunk;
-            onChunk(chunk); // <--- Update UI immediately
+            // Decode chunk and add to buffer
+            buffer += decoder.decode(value, { stream: true });
+
+            // Process complete lines
+            const lines = buffer.split('\n');
+            buffer = lines.pop(); // Keep the last incomplete line in buffer
+
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed || !trimmed.startsWith('data: ')) continue;
+
+                const dataStr = trimmed.slice(6); // Remove "data: "
+                if (dataStr === '[DONE]') continue;
+
+                try {
+                    const json = JSON.parse(dataStr);
+                    const content = json.choices?.[0]?.delta?.content || '';
+
+                    if (content) {
+                        fullText += content;
+                        onChunk(content); // <--- Output ONLY the clean text
+                    }
+                } catch (e) {
+                    console.warn("Error parsing stream chunk:", e);
+                }
+            }
         }
 
         // 5. Save full response to history
@@ -321,7 +339,6 @@ async function streamAIResponse(userMessage, onChunk) {
     } catch (error) {
         console.error("Stream Error:", error);
         onChunk("\n[Connection Error. Please try again.]");
-        // Remove the failed user message to prevent context corruption
         chatHistory.pop();
         return null;
     }
