@@ -26,7 +26,7 @@ export default async function handler(req, res) {
                 "Authorization": `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: "glm-4-plus", // Flagship model
+                model: "glm-4-flash", // Cost-effective model (for debugging)
                 messages: messages,
                 stream: true, // ENABLE STREAMING
                 temperature: 0.7,
