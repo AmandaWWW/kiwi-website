@@ -17,37 +17,58 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: 'Server configuration error' });
     }
 
+    // 3.1. Knowledge Base ID for RAG (Retrieval Augmented Generation)
+    const knowledgeId = process.env.ZHIPU_KNOWLEDGE_ID;
+    if (knowledgeId) {
+        console.log('Knowledge Base ID found, RAG enabled:', knowledgeId);
+    } else {
+        console.warn('ZHIPU_KNOWLEDGE_ID not set - proceeding without RAG');
+    }
+
     try {
-        // 4. Forward request to Zhipu AI with streaming enabled
+        // 4. Build request body with conditional RAG support
+        const requestBody = {
+            model: "glm-4-plus", // Recommended model for RAG
+            messages: messages,
+            stream: true, // ENABLE STREAMING
+            temperature: 0.5, // Lower temperature for more accurate retrieval
+            top_p: 0.7,
+            // Only add tools if Knowledge ID is present
+            ...(knowledgeId && {
+                tools: [{
+                    type: "retrieval",
+                    retrieval: {
+                        "knowledge_id": knowledgeId,
+                        "prompt_template": "请根据以下参考文档回答问题：\n{{knowledge}}\n\n如果文档中没有答案，请根据你的常识或System Prompt回答。\n用户问题：{{question}}"
+                    }
+                }]
+            })
+        };
+
+        // 5. Forward request to Zhipu AI with streaming enabled
         const response = await fetch("https://open.bigmodel.cn/api/paas/v4/chat/completions", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${apiKey}`
             },
-            body: JSON.stringify({
-                model: "glm-4-flash", // Cost-effective model (for debugging)
-                messages: messages,
-                stream: true, // ENABLE STREAMING
-                temperature: 0.7,
-                top_p: 0.7
-            })
+            body: JSON.stringify(requestBody)
         });
 
-        // 5. Handle Zhipu API errors
+        // 6. Handle Zhipu API errors
         if (!response.ok) {
             const errorData = await response.json();
             console.error("Zhipu API Error:", errorData);
             return res.status(502).json({ error: 'Failed to communicate with AI provider' });
         }
 
-        // 6. Prepare response headers for streaming
+        // 7. Prepare response headers for streaming
         res.writeHead(200, {
             'Content-Type': 'text/plain; charset=utf-8',
             'Transfer-Encoding': 'chunked'
         });
 
-        // 7. Create a reader to process the upstream stream
+        // 8. Create a reader to process the upstream stream
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
@@ -59,7 +80,7 @@ export default async function handler(req, res) {
             const chunk = decoder.decode(value, { stream: true });
             buffer += chunk;
 
-            // 8. Process complete SSE messages
+            // 9. Process complete SSE messages
             const lines = buffer.split('\n');
             buffer = lines.pop(); // Keep the last incomplete line in buffer
 
