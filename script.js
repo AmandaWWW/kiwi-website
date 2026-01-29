@@ -31,25 +31,7 @@ function initializePage() {
         }
 
         // Generate social links (shared across languages)
-        const socialSection = document.getElementById('socialSection');
-        if (socialSection && siteData.socialLinks) {
-            siteData.socialLinks.forEach(social => {
-                const socialCard = document.createElement('a');
-                socialCard.href = social.url;
-                socialCard.className = `social-card ${social.icon}`;
-                socialCard.style.setProperty('--social-color', social.color);
-                socialCard.style.setProperty('--social-glow', social.glow);
-
-                socialCard.innerHTML = `
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        ${social.svgPath}
-                    </svg>
-                    <span class="text">${social.name}</span>
-                `;
-
-                socialSection.appendChild(socialCard);
-            });
-        }
+        renderSocialLinks('en');
 
         // Render initial content
         renderContent('en');
@@ -127,8 +109,42 @@ function renderContent(language) {
 
         // Force update the timeline immediately when language changes
         renderTimeline();
+
+        // Update social links with new language
+        renderSocialLinks(language);
     } catch (error) {
         console.error('Error rendering content:', error);
+    }
+}
+
+// Render social links with language support
+function renderSocialLinks(language) {
+    const socialSection = document.getElementById('socialSection');
+    if (!socialSection) return;
+
+    // Clear existing social links
+    socialSection.innerHTML = '';
+
+    if (siteData.socialLinks) {
+        siteData.socialLinks.forEach(social => {
+            const socialCard = document.createElement('a');
+            socialCard.href = social.url;
+            socialCard.className = `social-card ${social.icon}`;
+            socialCard.style.setProperty('--social-color', social.color);
+            socialCard.style.setProperty('--social-glow', social.glow);
+
+            // Get the correct name based on language
+            const displayName = social.names[language] || social.names.en;
+
+            socialCard.innerHTML = `
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    ${social.svgPath}
+                </svg>
+                <span class="text">${displayName}</span>
+            `;
+
+            socialSection.appendChild(socialCard);
+        });
     }
 }
 
@@ -269,6 +285,25 @@ function switchToView(viewName) {
             if (socialSection) {
                 socialSection.classList.add('minimized');
             }
+
+            // Add scroll listener for smart sticky back button
+            const handleScroll = () => {
+                const backBtn = document.getElementById('backButton');
+                if (!backBtn) return;
+
+                if (aboutView.scrollTop > 100) {
+                    backBtn.classList.add('sticky-mode');
+                } else {
+                    backBtn.classList.remove('sticky-mode');
+                }
+            };
+
+            aboutView.addEventListener('scroll', handleScroll);
+
+            // CRITICAL FIX: Trigger immediately to handle restored scroll position
+            setTimeout(() => {
+                handleScroll();
+            }, 10);
         } else if (viewName === 'home') {
             console.log('Switching to Home view');
             // Switch to Home view
@@ -432,11 +467,19 @@ function addBackButton() {
         backButton = document.createElement('button');
         backButton.id = 'backButton';
         backButton.className = 'back-button';
-        backButton.textContent = '← Back to Home';
+
+        // Set button text based on current language
+        const buttonText = siteData[currentLanguage]?.backButtonText || '← Back to Home';
+        backButton.textContent = buttonText;
+
         backButton.addEventListener('click', () => {
             switchToView('home');
         });
         document.body.appendChild(backButton);
+    } else {
+        // Update existing button text if language changed
+        const buttonText = siteData[currentLanguage]?.backButtonText || '← Back to Home';
+        backButton.textContent = buttonText;
     }
 }
 

@@ -632,14 +632,30 @@
             cursor: pointer;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            z-index: 100;
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 900;
         }
 
         .back-button:hover {
             background: rgba(57, 255, 20, 0.1);
             border-color: var(--neon-green);
             box-shadow: 0 0 20px rgba(57, 255, 20, 0.5);
+        }
+
+        /* Desktop Sticky State */
+        .back-button.sticky-mode {
+            top: 30px;
+            left: 30px;
+            transform: translateX(0);
+            opacity: 0.4;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 20px;
+        }
+
+        .back-button.sticky-mode:hover {
+            opacity: 1;
+            background: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.6);
         }
 
         /* Mobile Responsive */
@@ -665,9 +681,22 @@
             }
 
             .back-button {
-                top: 80px;
+                position: absolute !important;
+                top: 40px !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                width: auto;
+                z-index: 40;
                 padding: 10px 20px;
                 font-size: 12px;
+            }
+
+            .back-button.sticky-mode {
+                top: 40px !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                opacity: 1 !important;
+                padding: 10px 20px !important;
             }
         }
 

@@ -8,7 +8,7 @@ const siteData = {
 
     socialLinks: [
         {
-            name: "小红书",
+            names: { en: "Red Note", cn: "小红书" },
             url: "https://xhslink.com/m/j1yyS2NG1s",
             icon: "instagram",
             color: "#FF0055",
@@ -16,7 +16,7 @@ const siteData = {
             svgPath: '<rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>'
         },
         {
-            name: "LinkedIn",
+            names: { en: "LinkedIn", cn: "领英" },
             url: "https://www.linkedin.com/in/huahan-wang-b70243254/",
             icon: "linkedin",
             color: "#00D4FF",
@@ -24,7 +24,7 @@ const siteData = {
             svgPath: '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>'
         },
         {
-            name: "GitHub",
+            names: { en: "GitHub", cn: "GitHub" },
             url: "https://github.com/AmandaWWW",
             icon: "github",
             color: "#39FF14",
@@ -47,6 +47,8 @@ const siteData = {
             { text: "Projects", url: "#" },
             { text: "Articles", url: "#" }
         ],
+
+        backButtonText: "← Back to Home",
 
         tags: [
             {
@@ -204,6 +206,8 @@ const siteData = {
             { text: "项目经历", url: "#" },
             { text: "文章", url: "#" }
         ],
+
+        backButtonText: "← 返回首页",
 
         tags: [
             {
