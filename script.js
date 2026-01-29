@@ -185,15 +185,23 @@ function initializeChat() {
             addMessage(message, 'user');
             chatInput.value = '';
 
-            // 2. Show typing indicator
-            showTypingIndicator();
+            // 2. Create placeholder Bot Message
+            const botMsgContent = addMessage('', 'bot');
 
-            // 3. Await the real API response
-            const response = await generateAIResponse(message);
+            if (!botMsgContent) {
+                console.error('Failed to create bot message element');
+                return;
+            }
 
-            // 4. Hide indicator and show AI response
-            hideTypingIndicator();
-            addMessage(response, 'bot');
+            // 3. Stream the response
+            await streamAIResponse(message, (chunk) => {
+                // Append text directly to the DOM element
+                botMsgContent.textContent += chunk;
+
+                // Auto-scroll
+                const chatMessages = document.getElementById('chatMessages');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
         }
     };
 
@@ -218,7 +226,7 @@ function initializeChat() {
 // Add message to chat
 function addMessage(text, type) {
     const chatMessages = document.getElementById('chatMessages');
-    if (!chatMessages) return;
+    if (!chatMessages) return null;
 
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${type}-message`;
@@ -232,6 +240,9 @@ function addMessage(text, type) {
 
     // Scroll to bottom
     chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    // Return the text element for streaming updates
+    return messageText;
 }
 
 // Show typing indicator
@@ -260,8 +271,8 @@ function hideTypingIndicator() {
     }
 }
 
-// Generate AI response by calling the backend API
-async function generateAIResponse(userMessage) {
+// Stream AI response by calling the backend API
+async function streamAIResponse(userMessage, onChunk) {
     // 1. Initialize System Prompt if history is empty
     if (chatHistory.length === 0) {
         // Safely access system prompt or fallback
@@ -288,19 +299,31 @@ async function generateAIResponse(userMessage) {
             throw new Error('Network response was not ok');
         }
 
-        const data = await response.json();
-        const aiText = data.result;
+        // 4. Stream Reader Setup
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let fullText = '';
 
-        // 4. Add AI response to history (maintain context)
-        chatHistory.push({ role: "assistant", content: aiText });
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-        return aiText;
+            // Decode chunk and trigger callback
+            const chunk = decoder.decode(value, { stream: true });
+            fullText += chunk;
+            onChunk(chunk); // <--- Update UI immediately
+        }
+
+        // 5. Save full response to history
+        chatHistory.push({ role: "assistant", content: fullText });
+        return fullText;
 
     } catch (error) {
-        console.error("Chat Error:", error);
+        console.error("Stream Error:", error);
+        onChunk("\n[Connection Error. Please try again.]");
         // Remove the failed user message to prevent context corruption
         chatHistory.pop();
-        return "⚠️ 连接神经中枢失败 (Connection Error)。请检查网络或稍后再试。";
+        return null;
     }
 }
 
