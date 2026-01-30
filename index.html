@@ -832,10 +832,7 @@
 
         /* Avatar Hover Prompt */
         .avatar-hover-prompt {
-            position: absolute;
-            top: 55%;
-            left: 50%;
-            transform: translateX(-50%);
+            position: fixed;
             background: rgba(0, 0, 0, 0.8);
             border: 1px solid rgba(174, 247, 64, 0.6);
             border-radius: 20px;
@@ -852,9 +849,9 @@
             box-shadow: 0 0 20px rgba(174, 247, 64, 0.3);
         }
 
-        .avatar-container:hover .avatar-hover-prompt {
+        .avatar-hover-prompt.mobile-visible {
             opacity: 1;
-            transform: translateX(-50%) translateY(-10px);
+            pointer-events: none;
         }
 
         /* Chat Interface */

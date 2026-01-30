@@ -162,12 +162,59 @@ function initializeChat() {
     const chatClose = document.getElementById('chatClose');
     const chatSend = document.getElementById('chatSend');
     const chatInput = document.getElementById('chatInput');
+    const hoverPrompt = document.getElementById('avatarHoverPrompt');
+
+    const isMobile = window.innerWidth <= 768;
 
     // Avatar click to open chat
     if (avatar) {
         avatar.addEventListener('click', () => {
             chatDrawer.classList.add('open');
         });
+
+        // Desktop: Mouse Follow Logic
+        if (hoverPrompt && !isMobile) {
+            avatar.addEventListener('mousemove', (e) => {
+                // Show prompt
+                hoverPrompt.style.opacity = '1';
+                hoverPrompt.style.transform = 'scale(1)';
+
+                // Follow cursor (offset by 20px so it doesn't cover the pointer)
+                hoverPrompt.style.left = `${e.clientX + 20}px`;
+                hoverPrompt.style.top = `${e.clientY + 20}px`;
+            });
+
+            avatar.addEventListener('mouseleave', () => {
+                // Hide prompt
+                hoverPrompt.style.opacity = '0';
+                hoverPrompt.style.transform = 'scale(0.9)';
+            });
+        }
+
+        // Mobile: Auto-show & Typewriter Delete
+        if (hoverPrompt && isMobile) {
+            // Position specifically for mobile (center of screen)
+            hoverPrompt.style.top = '55%';
+            hoverPrompt.style.left = '50%';
+            hoverPrompt.style.transform = 'translateX(-50%)';
+            hoverPrompt.style.opacity = '1';
+
+            // Wait 10 seconds, then delete text
+            setTimeout(() => {
+                const originalText = hoverPrompt.textContent;
+                let length = originalText.length;
+
+                const deleteInterval = setInterval(() => {
+                    length--;
+                    if (length >= 0) {
+                        hoverPrompt.textContent = originalText.substring(0, length);
+                    } else {
+                        clearInterval(deleteInterval);
+                        hoverPrompt.style.opacity = '0'; // Fully hide after deletion
+                    }
+                }, 50); // Delete speed (50ms per char)
+            }, 10000); // 10 seconds delay
+        }
     }
 
     // Close button
