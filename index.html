@@ -205,6 +205,52 @@
             width: 100%;
         }
 
+        /* Theme-specific Navigation Colors */
+        /* About Me - Electric Blue */
+        body.theme-about .nav-link:hover {
+            color: #2979FF;
+        }
+        body.theme-about .nav-link::after {
+            background: #2979FF;
+        }
+        body.theme-about .lang-option:hover {
+            color: rgba(41, 121, 255, 0.8);
+        }
+        body.theme-about .lang-option.active {
+            color: #2979FF;
+            text-shadow: 0 0 10px rgba(41, 121, 255, 0.6);
+        }
+
+        /* Projects - Bio-Hazard Orange */
+        body.theme-projects .nav-link:hover {
+            color: #FF9E00;
+        }
+        body.theme-projects .nav-link::after {
+            background: #FF9E00;
+        }
+        body.theme-projects .lang-option:hover {
+            color: rgba(255, 158, 0, 0.8);
+        }
+        body.theme-projects .lang-option.active {
+            color: #FF9E00;
+            text-shadow: 0 0 10px rgba(255, 158, 0, 0.6);
+        }
+
+        /* Articles - Neon Purple */
+        body.theme-articles .nav-link:hover {
+            color: #D340FF;
+        }
+        body.theme-articles .nav-link::after {
+            background: #D340FF;
+        }
+        body.theme-articles .lang-option:hover {
+            color: rgba(211, 64, 255, 0.8);
+        }
+        body.theme-articles .lang-option.active {
+            color: #D340FF;
+            text-shadow: 0 0 10px rgba(211, 64, 255, 0.6);
+        }
+
         /* Frosted Gradient Vignettes */
         .screen-vignette {
             position: fixed;
@@ -634,49 +680,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Back Button */
-        .back-button {
-            position: fixed;
-            top: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 30px;
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid rgba(57, 255, 20, 0.4);
-            border-radius: 8px;
-            color: var(--neon-green);
-            font-family: 'Roboto Mono', monospace;
-            font-size: 14px;
-            letter-spacing: 1px;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            z-index: 900;
-        }
-
-        .back-button:hover {
-            background: rgba(57, 255, 20, 0.1);
-            border-color: var(--neon-green);
-            box-shadow: 0 0 20px rgba(57, 255, 20, 0.5);
-        }
-
-        /* Desktop Sticky State */
-        .back-button.sticky-mode {
-            top: 30px;
-            left: 30px;
-            transform: translateX(0);
-            opacity: 0.4;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 8px 20px;
-        }
-
-        .back-button.sticky-mode:hover {
-            opacity: 1;
-            background: rgba(0, 0, 0, 0.8);
-            box-shadow: 0 0 20px rgba(57, 255, 20, 0.6);
-        }
-
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .site-logo {
@@ -701,25 +704,6 @@
                 width: calc(100% - 70px);
                 margin-left: 50px !important;
                 margin-right: 0 !important;
-            }
-
-            .back-button {
-                position: absolute !important;
-                top: 40px !important;
-                left: 50% !important;
-                transform: translateX(-50%) !important;
-                width: auto;
-                z-index: 40;
-                padding: 10px 20px;
-                font-size: 12px;
-            }
-
-            .back-button.sticky-mode {
-                top: 40px !important;
-                left: 50% !important;
-                transform: translateX(-50%) !important;
-                opacity: 1 !important;
-                padding: 10px 20px !important;
             }
         }
 
@@ -1101,6 +1085,1214 @@
         .avatar {
             animation: pulse-glow 3s ease-in-out infinite;
         }
+
+        /* Projects Page Styles */
+        .projects-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 120px 20px 100px;
+        }
+
+        .projects-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .projects-title {
+            font-family: 'Anton', sans-serif;
+            font-size: 48px;
+            color: var(--neon-green);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 40px;
+            text-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+        }
+
+        .projects-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .project-tab {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            border-radius: 8px;
+            padding: 12px 30px;
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(57, 255, 20, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .project-tab:hover::before {
+            left: 100%;
+        }
+
+        .project-tab:hover {
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .project-tab.active {
+            background: rgba(57, 255, 20, 0.1);
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.4);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .project-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                        0 0 20px rgba(57, 255, 20, 0.1);
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg,
+                var(--neon-green),
+                var(--neon-cyan),
+                var(--neon-pink),
+                var(--neon-green));
+            background-size: 400% 400%;
+            border-radius: 16px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        .project-card:hover::before {
+            opacity: 0.6;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                        0 0 40px rgba(57, 255, 20, 0.3);
+            border-color: var(--neon-green);
+        }
+
+        .project-card-image {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .project-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .project-card:hover .project-card-image img {
+            transform: scale(1.1);
+        }
+
+        .project-card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg,
+                transparent 0%,
+                rgba(0, 0, 0, 0.8) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .project-card:hover .project-card-overlay {
+            opacity: 1;
+        }
+
+        .project-card-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(57, 255, 20, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease;
+        }
+
+        .project-card:hover .project-card-glow {
+            width: 200%;
+            height: 200%;
+        }
+
+        .project-card-content {
+            padding: 24px;
+        }
+
+        .project-card-title {
+            font-family: 'Anton', sans-serif;
+            font-size: 20px;
+            color: var(--neon-green);
+            margin: 0 0 12px 0;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .project-card-summary {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin: 0 0 16px 0;
+        }
+
+        .project-card-tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tech-tag {
+            padding: 4px 12px;
+            background: rgba(57, 255, 20, 0.1);
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            border-radius: 4px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 11px;
+            color: var(--neon-green);
+            letter-spacing: 0.5px;
+        }
+
+        /* Project Modal Styles */
+        .project-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .project-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .project-modal-content {
+            background: rgba(5, 5, 5, 0.95);
+            border: 1px solid rgba(57, 255, 20, 0.5);
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8),
+                        0 0 60px rgba(57, 255, 20, 0.3);
+            animation: modal-slide-up 0.4s ease;
+        }
+
+        @keyframes modal-slide-up {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .project-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(57, 255, 20, 0.5);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: var(--neon-green);
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .project-modal-close:hover {
+            background: rgba(57, 255, 20, 0.2);
+            border-color: var(--neon-green);
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.5);
+            transform: rotate(90deg);
+        }
+
+        .project-modal-header {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .project-modal-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .project-modal-header-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg,
+                transparent 0%,
+                rgba(0, 0, 0, 0.9) 100%);
+        }
+
+        .project-modal-glow {
+            position: absolute;
+            bottom: -50%;
+            left: 50%;
+            width: 300%;
+            height: 100%;
+            background: radial-gradient(ellipse, rgba(57, 255, 20, 0.2) 0%, transparent 70%);
+            transform: translateX(-50%);
+            animation: modal-pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes modal-pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .project-modal-body {
+            padding: 40px;
+        }
+
+        .project-modal-title {
+            font-family: 'Anton', sans-serif;
+            font-size: 32px;
+            color: var(--neon-green);
+            margin: 0 0 20px 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(57, 255, 20, 0.4);
+        }
+
+        .project-modal-meta {
+            margin-bottom: 30px;
+        }
+
+        .project-modal-duration {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(57, 255, 20, 0.1);
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            border-radius: 6px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            color: var(--neon-green);
+            letter-spacing: 1px;
+        }
+
+        .project-modal-description {
+            margin-bottom: 30px;
+        }
+
+        .project-modal-description p {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .project-modal-tech-stack {
+            margin-bottom: 30px;
+        }
+
+        .project-modal-tech-stack h4 {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            color: var(--neon-cyan);
+            margin: 0 0 16px 0;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .tech-stack-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tech-stack-tags .tech-tag {
+            padding: 6px 16px;
+            font-size: 12px;
+        }
+
+        .project-modal-actions {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .project-modal-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            background: rgba(57, 255, 20, 0.2);
+            border: 1px solid rgba(57, 255, 20, 0.5);
+            border-radius: 8px;
+            color: var(--neon-green);
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-modal-link:hover {
+            background: rgba(57, 255, 20, 0.3);
+            border-color: var(--neon-green);
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .no-projects {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            padding: 60px 20px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .projects-container {
+                padding: 100px 20px 80px;
+            }
+
+            .projects-title {
+                font-size: 32px;
+                letter-spacing: 2px;
+            }
+
+            .projects-tabs {
+                gap: 10px;
+            }
+
+            .project-tab {
+                padding: 10px 20px;
+                font-size: 12px;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .project-modal-content {
+                max-height: 95vh;
+            }
+
+            .project-modal-header {
+                height: 200px;
+            }
+
+            .project-modal-body {
+                padding: 24px;
+            }
+
+            .project-modal-title {
+                font-size: 24px;
+                letter-spacing: 1px;
+            }
+
+            .project-modal-link {
+                padding: 12px 24px;
+                font-size: 12px;
+            }
+        }
+
+        /* =========================================
+           Projects View Theme Override: Bio-Hazard Orange
+           ========================================= */
+
+        /* Scope the main theme variable ONLY inside the projects view container */
+        #projects-view {
+            /* Locally override global neon-green with Orange */
+            --neon-green: #FF9E00;
+        }
+
+        /* Update specific project components that might use hardcoded RGBA glows */
+
+        /* 1. Projects Title */
+        .projects-title {
+            color: #FF9E00;
+            text-shadow: 0 0 30px rgba(255, 158, 0, 0.5);
+        }
+
+        /* 2. Tabs Glow */
+        .project-tab.active {
+            /* Ensure shadow matches the new orange variable */
+            box-shadow: 0 0 20px rgba(255, 158, 0, 0.7);
+        }
+
+        .project-tab:hover {
+            border-color: #FF9E00;
+            color: #FF9E00;
+            box-shadow: 0 0 20px rgba(255, 158, 0, 0.3);
+        }
+
+        /* 3. Card Styles */
+        .project-card {
+            /* Subtle orange border in default state */
+            border: 1px solid rgba(255, 158, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                        0 0 20px rgba(255, 158, 0, 0.1);
+        }
+
+        .project-card:hover {
+            /* Stronger orange glow on hover */
+            border-color: #FF9E00;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                        0 0 40px rgba(255, 158, 0, 0.3);
+        }
+
+        .project-card::before {
+            /* Orange gradient animation */
+            background: linear-gradient(45deg,
+                #FF9E00,
+                #FFB700,
+                #FF6B00,
+                #FF9E00);
+            background-size: 400% 400%;
+        }
+
+        .project-card-glow {
+            /* Orange radial glow */
+            background: radial-gradient(circle, rgba(255, 158, 0, 0.4) 0%, transparent 70%);
+        }
+
+        .project-card-content h3 {
+            /* Ensure titles use the orange theme */
+            color: #FF9E00;
+            text-shadow: 0 0 10px rgba(255, 158, 0, 0.5);
+        }
+
+        .tech-tag {
+            /* Update tech tag borders and text */
+            border-color: rgba(255, 158, 0, 0.5);
+            color: rgba(255, 158, 0, 0.9);
+            background: rgba(255, 158, 0, 0.1);
+        }
+
+        /* 4. Modal Styles */
+        .project-modal-content {
+            /* Orange border and ambient glow for the modal popup */
+            border: 1px solid rgba(255, 158, 0, 0.5);
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8),
+                        0 0 60px rgba(255, 158, 0, 0.3);
+        }
+
+        .project-modal-close {
+            /* Orange close button */
+            border: 1px solid rgba(255, 158, 0, 0.5);
+            color: #FF9E00;
+        }
+
+        .project-modal-close:hover {
+            /* Keep the background DARK, just add a slight orange tint or go full black */
+            background: rgba(0, 0, 0, 0.9);
+
+            /* Keep the glow effects */
+            border-color: #FF9E00;
+            box-shadow: 0 0 20px rgba(255, 158, 0, 0.6);
+            transform: rotate(90deg); /* Keep the rotation effect if it exists */
+            color: #FF9E00;
+        }
+
+        .project-modal-glow {
+            /* Orange pulsing glow */
+            background: radial-gradient(ellipse, rgba(255, 158, 0, 0.2) 0%, transparent 70%);
+        }
+
+        .project-modal-title {
+            /* Orange title with glow */
+            color: #FF9E00;
+            text-shadow: 0 0 20px rgba(255, 158, 0, 0.4);
+        }
+
+        .project-modal-duration {
+            /* Orange duration tag */
+            background: rgba(255, 158, 0, 0.1);
+            border: 1px solid rgba(255, 158, 0, 0.3);
+            color: #FF9E00;
+        }
+
+        .project-modal-tech-stack h4 {
+            /* Orange tech stack heading */
+            color: #FF9E00;
+        }
+
+        .project-modal-link {
+            /* Orange external link button */
+            background: rgba(255, 158, 0, 0.2);
+            border: 1px solid rgba(255, 158, 0, 0.5);
+            color: #FF9E00;
+        }
+
+        .project-modal-link:hover {
+            background: rgba(255, 158, 0, 0.3);
+            border-color: #FF9E00;
+            box-shadow: 0 0 30px rgba(255, 158, 0, 0.5);
+        }
+
+        /* 5. Update any hardcoded orange references in the projects view */
+        #projects-view .tech-tag:hover {
+            background: rgba(255, 158, 0, 0.2);
+            border-color: #FF9E00;
+        }
+
+        /* =========================================
+           About View Theme Override: Electric Blue
+           ========================================= */
+
+        /* Scope the main theme variable ONLY inside the about view container */
+        #about-view {
+            /* Locally override global neon-green with Electric Blue */
+            --neon-green: #2979FF;
+        }
+
+        /* 1. View Title (New) */
+        .view-title {
+            font-family: 'Anton', sans-serif;
+            font-size: 48px;
+            color: #2979FF;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-align: center;
+            margin: 120px 20px 60px;
+            text-shadow: 0 0 30px rgba(41, 121, 255, 0.5);
+        }
+
+        /* 2. Timeline Styles */
+        .timeline::before {
+            /* Electric blue central fiber */
+            background: linear-gradient(180deg,
+                rgba(41, 121, 255, 0.2) 0%,
+                rgba(41, 121, 255, 0.8) 50%,
+                rgba(41, 121, 255, 0.2) 100%);
+            box-shadow: 0 0 15px rgba(41, 121, 255, 0.5),
+                        0 0 30px rgba(41, 121, 255, 0.3);
+        }
+
+        .timeline-node {
+            /* Electric blue nodes */
+            background: #2979FF;
+            border: 3px solid rgba(41, 121, 255, 0.3);
+            box-shadow: 0 0 20px rgba(41, 121, 255, 0.8),
+                        0 0 40px rgba(41, 121, 255, 0.4);
+        }
+
+        .timeline-content {
+            /* Electric blue borders for timeline cards */
+            border: 1px solid rgba(41, 121, 255, 0.3);
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .timeline-content:hover {
+            /* Stronger blue glow on hover */
+            border-color: #2979FF;
+            box-shadow: 0 10px 40px rgba(41, 121, 255, 0.2);
+        }
+
+        .timeline-item.left .timeline-content::before,
+        .timeline-item.right .timeline-content::before {
+            /* Electric blue connector lines */
+            background: #2979FF;
+            opacity: 0.5;
+        }
+
+        .timeline-date {
+            /* Electric blue dates */
+            color: #2979FF;
+            text-shadow: 0 0 10px rgba(41, 121, 255, 0.5);
+        }
+
+        .timeline-tag {
+            /* Electric blue tags */
+            background: rgba(41, 121, 255, 0.1);
+            border: 1px solid rgba(41, 121, 255, 0.3);
+            color: #2979FF;
+        }
+
+        /* 3. Mobile Responsive Updates */
+        @media (max-width: 768px) {
+            .view-title {
+                font-size: 32px;
+                letter-spacing: 2px;
+                margin: 100px 20px 40px;
+            }
+        }
+
+        /* =========================================
+           Advanced Overlay Scrollbar System
+           ========================================= */
+
+        /* 1. Global Page Scrollbar (The Main Right Scrollbar) */
+        /* Apply overlay behavior to the views */
+        .view {
+            overflow-y: overlay; /* Magic property: puts scrollbar ON TOP of content */
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
+        }
+
+        /* Scrollbar Track - Always Transparent */
+        ::-webkit-scrollbar {
+            width: 6px; /* Very thin */
+            height: 6px;
+            background: transparent; /* No background color */
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent; /* Completely invisible track */
+        }
+
+        /* Scrollbar Thumb - Hidden by default, visible on hover */
+        ::-webkit-scrollbar-thumb {
+            background: transparent; /* Hidden by default */
+            border-radius: 3px;
+            transition: background 0.3s ease;
+        }
+
+        /* ONLY show the thumb when hovering over the scrollable area */
+        /* Note: We target the container's hover state to reveal the scrollbar */
+        .view:hover::-webkit-scrollbar-thumb {
+            background: rgba(57, 255, 20, 0.3); /* Faint green when hovering page */
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(57, 255, 20, 0.8) !important; /* Bright green when grabbing it */
+        }
+
+        /* 2. Project Modal Scrollbar (Specific Orange Theme) */
+        .project-modal-content {
+            /* Enable vertical scrolling */
+            overflow-y: auto;
+
+            /* 1. Hide scrollbar for Firefox */
+            scrollbar-width: none;
+
+            /* Ensure no extra margin is added */
+            margin-right: 0;
+        }
+
+        /* 2. Hide scrollbar for Chrome, Safari, Edge, and Opera */
+        .project-modal-content::-webkit-scrollbar {
+            display: none; /* This completely removes the scrollbar element */
+        }
+
+        /* =========================================
+           About Hero Section & Shared Element Transition
+           ========================================= */
+
+        /* 1. About Hero Layout */
+        .about-hero {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            padding: 40px 100px;
+            margin: 20px 0 60px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Avatar Wrapper - Provides smooth positioning */
+        .about-avatar-wrapper {
+            flex-shrink: 0;
+            width: 300px;
+            height: 300px;
+            position: relative;
+            border-radius: 50%;
+            overflow: hidden;
+            /* Shared Element Transition Base */
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* Avatar Image */
+        .about-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid var(--neon-green);
+            box-shadow: 0 0 30px rgba(41, 121, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .about-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(41, 121, 255, 0.6);
+        }
+
+        /* Bio Text Section */
+        .about-bio-text {
+            flex-grow: 1;
+            max-width: 800px;
+        }
+
+        .bio-paragraph {
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+            text-align: left;
+        }
+
+        /* Mobile Responsive Layout */
+        @media (max-width: 968px) {
+            .about-hero {
+                flex-direction: column;
+                text-align: center;
+                padding: 30px 20px;
+                gap: 30px;
+            }
+
+            .about-avatar-wrapper {
+                width: 200px;
+                height: 200px;
+            }
+
+            .bio-paragraph {
+                font-size: 16px;
+                line-height: 1.6;
+                text-align: center;
+            }
+        }
+
+        /* Extra Small Devices */
+        @media (max-width: 480px) {
+            .about-avatar-wrapper {
+                width: 150px;
+                height: 150px;
+            }
+
+            .bio-paragraph {
+                font-size: 14px;
+            }
+        }
+
+        /* =========================================
+           Articles View Theme Override: Neon Purple
+           ========================================= */
+
+        /* Scope the main theme variable ONLY inside the articles view container */
+        #articles-view {
+            /* Locally override global neon-green with Neon Purple */
+            --neon-green: #D340FF;
+        }
+
+        /* 1. FORCE Purple Theme for Articles Title */
+        #articles-view .view-title {
+            color: #D340FF !important;
+            text-shadow: 0 0 30px rgba(211, 64, 255, 0.6);
+        }
+
+        /* 2. Articles Container */
+        .articles-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px 40px 80px;
+        }
+
+        /* 2. Data Log Header */
+        .data-log-header {
+            border-bottom: 2px solid rgba(211, 64, 255, 0.3);
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+
+        .log-header-line {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            color: #D340FF;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .log-header-meta {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            color: rgba(211, 64, 255, 0.7);
+            letter-spacing: 1px;
+        }
+
+        /* 3. Article Entries - Data Log Style */
+        .article-entry {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(211, 64, 255, 0.2);
+            border-left: 3px solid rgba(211, 64, 255, 0.5);
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .article-entry::before {
+            content: '>';
+            position: absolute;
+            left: 10px;
+            top: 20px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            color: #D340FF;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .article-entry:hover {
+            border-color: rgba(211, 64, 255, 0.6);
+            border-left-color: #D340FF;
+            background: rgba(211, 64, 255, 0.05);
+            transform: translateX(5px);
+            box-shadow: 0 0 20px rgba(211, 64, 255, 0.2);
+        }
+
+        .article-entry:hover::before {
+            opacity: 1;
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-left: 20px;
+        }
+
+        .entry-date {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            color: #D340FF;
+            letter-spacing: 1px;
+        }
+
+        .entry-tags {
+            display: flex;
+            gap: 8px;
+        }
+
+        .entry-tag {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 10px;
+            color: rgba(211, 64, 255, 0.8);
+            border: 1px solid rgba(211, 64, 255, 0.3);
+            padding: 2px 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .entry-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0 0 10px 20px;
+            letter-spacing: 0.5px;
+            font-weight: 400;
+        }
+
+        .entry-summary {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0 0 15px 20px;
+            line-height: 1.6;
+            letter-spacing: 0.3px;
+        }
+
+        .entry-action {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 11px;
+            color: #D340FF;
+            padding-left: 20px;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .article-entry:hover .entry-action {
+            opacity: 1;
+        }
+
+        /* 4. Article Reader Modal */
+        .article-reader-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .article-reader-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .article-reader-content {
+            background: rgba(5, 5, 5, 0.98);
+            border: 1px solid rgba(211, 64, 255, 0.5);
+            border-radius: 12px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8),
+                        0 0 60px rgba(211, 64, 255, 0.3);
+            animation: reader-slide-up 0.4s ease;
+            margin-right: 0; /* Ensure no margin for scrollbar */
+            scrollbar-width: none; /* Hide Firefox scrollbar */
+        }
+
+        .article-reader-content::-webkit-scrollbar {
+            display: none; /* Hide webkit scrollbar */
+        }
+
+        @keyframes reader-slide-up {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .article-reader-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(211, 64, 255, 0.5);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: #D340FF;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .article-reader-close:hover {
+            background: rgba(211, 64, 255, 0.2);
+            border-color: #D340FF;
+            box-shadow: 0 0 20px rgba(211, 64, 255, 0.5);
+            transform: rotate(90deg);
+        }
+
+        .article-reader-header {
+            padding: 60px 60px 40px;
+            border-bottom: 1px solid rgba(211, 64, 255, 0.2);
+        }
+
+        .article-reader-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .article-date {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            color: #D340FF;
+            letter-spacing: 1px;
+        }
+
+        .article-tags {
+            display: flex;
+            gap: 10px;
+        }
+
+        .reader-tag {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            color: rgba(211, 64, 255, 0.9);
+            border: 1px solid rgba(211, 64, 255, 0.4);
+            padding: 4px 12px;
+            letter-spacing: 0.5px;
+            background: rgba(211, 64, 255, 0.1);
+        }
+
+        .article-reader-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 32px;
+            color: #D340FF;
+            margin: 0;
+            letter-spacing: 1px;
+            line-height: 1.3;
+        }
+
+        .article-reader-body {
+            padding: 40px 60px;
+            font-family: 'Georgia', serif;
+            font-size: 18px;
+            line-height: 1.9;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .article-reader-body h2 {
+            font-family: 'Space Mono', monospace;
+            font-size: 24px;
+            color: #D340FF;
+            margin: 40px 0 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .article-reader-body h3 {
+            font-family: 'Space Mono', monospace;
+            font-size: 20px;
+            color: rgba(211, 64, 255, 0.8);
+            margin: 30px 0 15px;
+            letter-spacing: 0.3px;
+        }
+
+        .article-reader-body p {
+            margin: 0 0 20px;
+        }
+
+        .article-reader-body blockquote {
+            border-left: 3px solid #D340FF;
+            padding-left: 20px;
+            margin: 30px 0;
+            font-style: italic;
+            color: rgba(211, 64, 255, 0.8);
+            background: rgba(211, 64, 255, 0.05);
+            padding: 15px 20px;
+        }
+
+        .article-reader-body strong {
+            color: #D340FF;
+            font-weight: 600;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .articles-container {
+                padding: 20px 20px 60px;
+            }
+
+            .article-entry {
+                padding: 15px;
+            }
+
+            .entry-title {
+                font-size: 16px;
+            }
+
+            .entry-summary {
+                font-size: 12px;
+            }
+
+            .article-reader-content {
+                max-height: 95vh;
+            }
+
+            .article-reader-header {
+                padding: 40px 30px 30px;
+            }
+
+            .article-reader-body {
+                padding: 30px;
+                font-size: 16px;
+            }
+
+            .article-reader-title {
+                font-size: 24px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1166,10 +2358,72 @@
 
         <!-- About View -->
         <section class="view hidden-right" id="about-view">
+            <h2 class="view-title">ABOUT ME</h2>
+
+            <div class="about-hero">
+                <div class="about-avatar-wrapper">
+                    <img src="portrait.png" class="about-avatar" alt="Kiwi Profile">
+                </div>
+                <div class="about-bio-text" id="aboutBioText">
+                    <!-- Bio text will be dynamically generated -->
+                </div>
+            </div>
+
             <div class="timeline-container" id="timelineContainer">
                 <!-- Timeline content will be dynamically generated -->
             </div>
         </section>
+
+        <!-- Projects View -->
+        <section class="view hidden-right" id="projects-view">
+            <div class="projects-container">
+                <div class="projects-header">
+                    <h1 class="projects-title">Projects</h1>
+                    <div class="projects-tabs" id="projectTabs">
+                        <!-- Tabs will be dynamically generated -->
+                    </div>
+                </div>
+                <div class="projects-grid" id="projectsContainer">
+                    <!-- Project cards will be dynamically generated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Articles View -->
+        <section class="view hidden-right" id="articles-view">
+            <h2 class="view-title">ARTICLES</h2>
+            <div class="articles-container">
+                <div class="data-log-header">
+                    <div class="log-header-line">DATA_LOG // KIWI_DATABASE</div>
+                    <div class="log-header-meta">ENTRIES: 5 | STATUS: ACTIVE</div>
+                </div>
+                <div class="articles-list" id="articlesList">
+                    <!-- Article entries will be dynamically generated -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Article Reader Modal -->
+    <div class="article-reader-modal" id="articleReaderModal">
+        <div class="article-reader-content">
+            <button class="article-reader-close" id="articleReaderClose">&times;</button>
+            <div class="article-reader-header">
+                <div class="article-reader-meta" id="articleReaderMeta">
+                    <span class="article-date"></span>
+                    <div class="article-tags"></div>
+                </div>
+                <h1 class="article-reader-title" id="articleReaderTitle"></h1>
+            </div>
+            <div class="article-reader-body" id="articleReaderBody">
+                <!-- Article content will be dynamically generated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div class="project-modal" id="projectModal">
+        <!-- Modal content will be dynamically generated -->
     </div>
 
     <!-- Social Section -->
@@ -1181,6 +2435,8 @@
 
     <script src="prompts.js"></script>
     <script src="config.js"></script>
+    <script src="projects.js"></script>
+    <script src="articles.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -51,8 +51,6 @@ const siteData = {
             { text: "Articles", url: "#" }
         ],
 
-        backButtonText: "← Back to Home",
-
         chat: {
             hoverPrompt: "Say Hi to Kiwi 👋",
             windowTitle: "KIWI // LINK",
@@ -60,6 +58,8 @@ const siteData = {
             placeholder: "Type a message...",
             send: "SEND"
         },
+
+        longBio: "Hi, I'm Kiwi. A Neuroscience student at UCL with a passion for AI. I bridge the gap between biological intelligence and artificial systems, building tools that feel organic and intuitive.",
 
         tags: [
             {
@@ -218,8 +218,6 @@ const siteData = {
             { text: "文章", url: "#" }
         ],
 
-        backButtonText: "← 返回首页",
-
         chat: {
             hoverPrompt: "快来和Kiwi打个招呼 👋",
             windowTitle: "KIWI // 神经链接",
@@ -227,6 +225,8 @@ const siteData = {
             placeholder: "输入指令...",
             send: "发送"
         },
+
+        longBio: "你好，我是 Kiwi。UCL 神经科学在读，AI 领域的探索者。致力于连接生物智能与人工系统，打造既具生物直觉又功能强大的数字产品。",
 
         tags: [
             {

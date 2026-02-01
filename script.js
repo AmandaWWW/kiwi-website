@@ -83,20 +83,8 @@ function renderContent(language) {
         // Update active language state FIRST - this is crucial!
         currentLanguage = language;
 
-        // Clear existing content
-        clearContent();
-
-        // Generate navigation
-        const navigation = document.getElementById('navigation');
-        if (navigation && siteData[language]?.navigation) {
-            siteData[language].navigation.forEach(navItem => {
-                const link = document.createElement('a');
-                link.href = navItem.url;
-                link.className = 'nav-link';
-                link.textContent = navItem.text;
-                navigation.appendChild(link);
-            });
-        }
+        // Update navigation links (instead of recreating)
+        updateNavigationLinks(language);
 
         // Get the correct tags data for the selected language
         const currentTags = siteData[language]?.tags;
@@ -115,12 +103,56 @@ function renderContent(language) {
         renderTimeline();
 
         // Update social links with new language
-        renderSocialLinks(language);
+        updateSocialLinks(language);
 
         // Update chat interface text with new language
         updateChatText();
+
+        // Update Projects View (New Addition)
+        if (typeof initializeProjects === 'function') {
+            initializeProjects();
+        }
+
+        // Update Articles View (New Addition)
+        if (typeof renderArticles === 'function') {
+            renderArticles();
+        }
     } catch (error) {
         console.error('Error rendering content:', error);
+    }
+}
+
+// Update navigation links without recreating them
+function updateNavigationLinks(language) {
+    const navigation = document.getElementById('navigation');
+    if (!navigation || !siteData[language]?.navigation) return;
+
+    const existingLinks = navigation.querySelectorAll('.nav-link');
+    const newNavData = siteData[language].navigation;
+
+    // Update existing links
+    existingLinks.forEach((link, index) => {
+        if (index < newNavData.length) {
+            link.textContent = newNavData[index].text;
+        }
+    });
+
+    // Handle case where new language has more navigation items
+    if (newNavData.length > existingLinks.length) {
+        for (let i = existingLinks.length; i < newNavData.length; i++) {
+            const link = document.createElement('a');
+            link.href = newNavData[i].url;
+            link.className = 'nav-link';
+            link.textContent = newNavData[i].text;
+            navigation.appendChild(link);
+        }
+    }
+
+    // Handle case where new language has fewer navigation items
+    if (newNavData.length < existingLinks.length) {
+        for (let i = newNavData.length; i < existingLinks.length; i++) {
+            existingLinks[i].remove();
+        }
     }
 }
 
@@ -153,6 +185,26 @@ function renderSocialLinks(language) {
             socialSection.appendChild(socialCard);
         });
     }
+}
+
+// Update social links without recreating them
+function updateSocialLinks(language) {
+    const socialSection = document.getElementById('socialSection');
+    if (!socialSection || !siteData.socialLinks) return;
+
+    const existingCards = socialSection.querySelectorAll('.social-card');
+
+    // Update existing social cards
+    existingCards.forEach((card, index) => {
+        if (index < siteData.socialLinks.length) {
+            const social = siteData.socialLinks[index];
+            const displayName = social.names[language] || social.names.en;
+            const textSpan = card.querySelector('.text');
+            if (textSpan) {
+                textSpan.textContent = displayName;
+            }
+        }
+    });
 }
 
 // Initialize Chat Interface
@@ -510,104 +562,424 @@ function setupSPANavigation() {
                 switchToView('about');
             } else if (linkText === 'home' || linkText === '首页') {
                 switchToView('home');
+            } else if (linkText === 'projects' || linkText === '项目经历') {
+                switchToView('projects');
+            } else if (linkText === 'articles' || linkText === '文章') {
+                switchToView('articles');
             }
             // Other links can be handled similarly
         }
     });
 }
 
-// View switching function with comprehensive null checks
+// View switching function with robust class cleaning and 4-view management
 function switchToView(viewName) {
     console.log('switchToView called with:', viewName);
 
     const homeView = document.getElementById('home-view');
     const aboutView = document.getElementById('about-view');
+    const projectsView = document.getElementById('projects-view');
+    const articlesView = document.getElementById('articles-view');
 
-    console.log('DOM elements found:', {
-        homeView: homeView ? '✓' : '✗',
-        aboutView: aboutView ? '✓' : '✗'
-    });
-
-    // CRITICAL NULL CHECKS - Prevent crashes completely
-    if (!homeView) {
-        console.error("CRITICAL ERROR: #home-view element not found in DOM!");
-        console.error("Please check that index.html contains: <section class=\"view active\" id=\"home-view\">");
-        showCriticalError("Home view missing", "Required #home-view element not found in HTML");
+    // Safety check
+    if (!homeView || !aboutView || !projectsView || !articlesView) {
+        console.error("Critical: One or more views not found in DOM");
         return;
     }
 
-    if (!aboutView) {
-        console.error("CRITICAL ERROR: #about-view element not found in DOM!");
-        console.error("Please check that index.html contains: <section class=\"view hidden-right\" id=\"about-view\">");
-        showCriticalError("About view missing", "Required #about-view element not found in HTML");
-        return;
-    }
+    // Helper to manage Theme Classes on Body
+    const setBodyTheme = (themeClass) => {
+        // Remove all potential theme classes first
+        document.body.classList.remove('theme-about', 'theme-projects', 'theme-articles');
+        if (themeClass) {
+            document.body.classList.add(themeClass);
+        }
+    };
 
-    console.log('Both view elements found, proceeding with transition...');
+    // Helper to hide a view to the LEFT
+    const hideLeft = (el) => {
+        if (!el) return;
+        el.classList.remove('active', 'hidden-right');
+        el.classList.add('hidden-left');
+    };
+
+    // Helper to hide a view to the RIGHT
+    const hideRight = (el) => {
+        if (!el) return;
+        el.classList.remove('active', 'hidden-left');
+        el.classList.add('hidden-right');
+    };
+
+    // Helper to show the ACTIVE view
+    const showActive = (el) => {
+        if (!el) return;
+        el.classList.remove('hidden-left', 'hidden-right');
+        el.classList.add('active');
+    };
 
     try {
-        if (viewName === 'about') {
-            console.log('Switching to About view');
-            // Switch to About view
-            homeView.classList.remove('active');
-            homeView.classList.add('hidden-left');
-
-            aboutView.classList.remove('hidden-right');
-            aboutView.classList.add('active');
-
-            // Render timeline if not already rendered
-            renderTimeline();
-            addBackButton();
-
-            // Morph social section to minimized toolbar
-            const socialSection = document.getElementById('socialSection');
-            if (socialSection) {
-                socialSection.classList.add('minimized');
-            }
-
-            // Add scroll listener for smart sticky back button
-            const handleScroll = () => {
-                const backBtn = document.getElementById('backButton');
-                if (!backBtn) return;
-
-                if (aboutView.scrollTop > 100) {
-                    backBtn.classList.add('sticky-mode');
-                } else {
-                    backBtn.classList.remove('sticky-mode');
-                }
-            };
-
-            aboutView.addEventListener('scroll', handleScroll);
-
-            // CRITICAL FIX: Trigger immediately to handle restored scroll position
-            setTimeout(() => {
-                handleScroll();
-            }, 10);
-        } else if (viewName === 'home') {
+        if (viewName === 'home') {
             console.log('Switching to Home view');
-            // Switch to Home view
-            aboutView.classList.remove('active');
-            aboutView.classList.add('hidden-right');
+            setBodyTheme(null); // Default Green
 
-            homeView.classList.remove('hidden-left');
-            homeView.classList.add('active');
+            showActive(homeView);
+            hideRight(aboutView);
+            hideRight(projectsView);
+            hideRight(articlesView);
 
-            // Remove back button
-            removeBackButton();
-
-            // Restore social section to full cards
+            // Restore social bar
             const socialSection = document.getElementById('socialSection');
-            if (socialSection) {
-                socialSection.classList.remove('minimized');
-            }
-        } else {
-            console.warn('Unknown view name:', viewName);
+            if (socialSection) socialSection.classList.remove('minimized');
+
+        } else if (viewName === 'about') {
+            console.log('Switching to About view');
+            setBodyTheme('theme-about'); // Blue
+
+            hideLeft(homeView);
+            showActive(aboutView);
+            hideRight(projectsView);
+            hideRight(articlesView);
+
+            renderTimeline();
+            renderAboutBio();
+            minimizeSocial();
+
+        } else if (viewName === 'projects') {
+            console.log('Switching to Projects view');
+            setBodyTheme('theme-projects'); // Orange
+
+            hideLeft(homeView);
+            hideLeft(aboutView);
+            showActive(projectsView);
+            hideRight(articlesView); // Ensure Articles is hidden to the right
+
+            if (typeof initializeProjects === 'function') initializeProjects();
+            minimizeSocial();
+
+        } else if (viewName === 'articles') {
+            console.log('Switching to Articles view');
+            setBodyTheme('theme-articles'); // Purple
+
+            hideLeft(homeView);
+            hideLeft(aboutView);
+            hideLeft(projectsView); // Projects goes left
+            showActive(articlesView);
+
+            if (typeof initializeArticles === 'function') initializeArticles();
+            minimizeSocial();
         }
     } catch (error) {
         console.error('Error during view transition:', error);
-        showCriticalError("View transition failed", error.message);
     }
 }
+
+function minimizeSocial() {
+    const socialSection = document.getElementById('socialSection');
+    if (socialSection) socialSection.classList.add('minimized');
+}
+
+// Initialize Projects Page
+function initializeProjects() {
+    console.log("Initializing projects page...");
+
+    // Check if projectData is available
+    if (typeof projectData === 'undefined') {
+        console.error('projectData not loaded. Make sure projects.js is included.');
+        return;
+    }
+
+    // Initialize category tabs
+    setupProjectTabs();
+
+    // Render initial category (internship)
+    renderProjects('internship');
+
+    console.log("Projects page initialized successfully.");
+}
+
+// Initialize Articles Page
+function initializeArticles() {
+    console.log("Initializing articles page...");
+
+    // Check if articleData is available
+    if (typeof articleData === 'undefined') {
+        console.error('articleData not loaded. Make sure articles.js is included.');
+        return;
+    }
+
+    // Render articles list
+    renderArticlesList();
+
+    // Setup article reader modal close button
+    setupArticleReaderModal();
+
+    console.log("Articles page initialized successfully.");
+}
+
+// Render Articles List
+function renderArticlesList() {
+    const articlesList = document.getElementById('articlesList');
+    if (!articlesList) return;
+
+    // Clear existing content
+    articlesList.innerHTML = '';
+
+    // Sort articles by date (newest first)
+    const sortedArticles = [...articleData].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    sortedArticles.forEach(article => {
+        const articleEntry = createArticleEntry(article);
+        articlesList.appendChild(articleEntry);
+    });
+
+    console.log(`Rendered ${sortedArticles.length} articles.`);
+}
+
+// Create Article Entry Element
+function createArticleEntry(article) {
+    const entry = document.createElement('div');
+    entry.className = 'article-entry';
+    entry.dataset.articleId = article.id;
+
+    entry.innerHTML = `
+        <div class="entry-header">
+            <span class="entry-date">${article.date}</span>
+            <div class="entry-tags">
+                ${article.tags.map(tag => `<span class="entry-tag">${tag}</span>`).join('')}
+            </div>
+        </div>
+        <h3 class="entry-title">${article.title}</h3>
+        <p class="entry-summary">${article.summary}</p>
+        <div class="entry-action">READ_ENTRY_ >_</div>
+    `;
+
+    // Add click event to open article reader
+    entry.addEventListener('click', () => openArticleReader(article));
+
+    return entry;
+}
+
+// Open Article Reader Modal
+function openArticleReader(article) {
+    const modal = document.getElementById('articleReaderModal');
+    if (!modal) return;
+
+    // Populate modal with article data
+    const metaElement = document.getElementById('articleReaderMeta');
+    const titleElement = document.getElementById('articleReaderTitle');
+    const bodyElement = document.getElementById('articleReaderBody');
+
+    if (metaElement) {
+        const dateElement = metaElement.querySelector('.article-date');
+        if (dateElement) dateElement.textContent = article.date;
+
+        const tagsElement = metaElement.querySelector('.article-tags');
+        if (tagsElement) {
+            tagsElement.innerHTML = article.tags.map(tag => `<span class="reader-tag">${tag}</span>`).join('');
+        }
+    }
+
+    if (titleElement) titleElement.textContent = article.title;
+    if (bodyElement) bodyElement.innerHTML = article.content;
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+// Setup Article Reader Modal
+function setupArticleReaderModal() {
+    const modal = document.getElementById('articleReaderModal');
+    const closeBtn = document.getElementById('articleReaderClose');
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeArticleReader);
+    }
+
+    // Close modal when clicking outside content
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeArticleReader();
+            }
+        });
+    }
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeArticleReader();
+        }
+    });
+}
+
+// Close Article Reader Modal
+function closeArticleReader() {
+    const modal = document.getElementById('articleReaderModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
+    }
+}
+
+// Setup Project Category Tabs
+function setupProjectTabs() {
+    const tabsContainer = document.getElementById('projectTabs');
+    if (!tabsContainer) return;
+
+    // Clear existing tabs
+    tabsContainer.innerHTML = '';
+
+    // Get language-specific tab names
+    const isChinese = currentLanguage === 'cn';
+    const categories = [
+        { key: 'internship', name: isChinese ? '实习经历' : 'Internship' },
+        { key: 'personal', name: isChinese ? '个人项目' : 'Personal Products' },
+        { key: 'school', name: isChinese ? '校园项目' : 'School Projects' }
+    ];
+
+    categories.forEach(category => {
+        const tab = document.createElement('button');
+        tab.className = 'project-tab';
+        tab.dataset.category = category.key;
+        tab.textContent = category.name;
+
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs
+            document.querySelectorAll('.project-tab').forEach(t => t.classList.remove('active'));
+            // Add active class to clicked tab
+            tab.classList.add('active');
+            // Render projects for this category
+            renderProjects(category.key);
+        });
+
+        tabsContainer.appendChild(tab);
+    });
+
+    // Set first tab as active
+    const firstTab = tabsContainer.querySelector('.project-tab');
+    if (firstTab) {
+        firstTab.classList.add('active');
+    }
+}
+
+// Render Projects for a Category
+function renderProjects(category) {
+    const projectsContainer = document.getElementById('projectsContainer');
+    if (!projectsContainer) return;
+
+    // Clear existing projects
+    projectsContainer.innerHTML = '';
+
+    const projects = projectData[category];
+    if (!projects || projects.length === 0) {
+        projectsContainer.innerHTML = '<p class="no-projects">No projects found.</p>';
+        return;
+    }
+
+    projects.forEach(project => {
+        const projectCard = createProjectCard(project);
+        projectsContainer.appendChild(projectCard);
+    });
+}
+
+// Create Project Card Element
+function createProjectCard(project) {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    card.dataset.projectId = project.id;
+
+    card.innerHTML = `
+        <div class="project-card-image">
+            <img src="${project.image}" alt="${project.title}">
+            <div class="project-card-overlay">
+                <div class="project-card-glow"></div>
+            </div>
+        </div>
+        <div class="project-card-content">
+            <h3 class="project-card-title">${project.title}</h3>
+            <p class="project-card-summary">${project.summary}</p>
+            <div class="project-card-tech-stack">
+                ${project.techStack.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+            </div>
+        </div>
+    `;
+
+    // Add click event to open modal
+    card.addEventListener('click', () => openProjectModal(project));
+
+    return card;
+}
+
+// Open Project Modal
+function openProjectModal(project) {
+    const modal = document.getElementById('projectModal');
+    if (!modal) return;
+
+    // Populate modal with project data
+    modal.innerHTML = `
+        <div class="project-modal-content">
+            <button class="project-modal-close" onclick="closeProjectModal()">&times;</button>
+            <div class="project-modal-header">
+                <img src="${project.image}" alt="${project.title}" class="project-modal-image">
+                <div class="project-modal-header-overlay">
+                    <div class="project-modal-glow"></div>
+                </div>
+            </div>
+            <div class="project-modal-body">
+                <h2 class="project-modal-title">${project.title}</h2>
+                <div class="project-modal-meta">
+                    <span class="project-modal-duration">${project.duration}</span>
+                </div>
+                <div class="project-modal-description">
+                    <p>${project.description}</p>
+                </div>
+                <div class="project-modal-tech-stack">
+                    <h4>Tech Stack</h4>
+                    <div class="tech-stack-tags">
+                        ${project.techStack.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+                    </div>
+                </div>
+                <div class="project-modal-actions">
+                    <a href="${project.link}" target="_blank" rel="noopener noreferrer" class="project-modal-link">
+                        <span>View Project</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    `;
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+// Close Project Modal
+function closeProjectModal() {
+    const modal = document.getElementById('projectModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
+    }
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', (e) => {
+    const modal = document.getElementById('projectModal');
+    if (modal && e.target === modal) {
+        closeProjectModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeProjectModal();
+    }
+});
 
 // Helper function to show critical errors
 function showCriticalError(title, message) {
@@ -739,34 +1111,19 @@ function renderTimeline() {
     console.log("Timeline rendering complete!");
 }
 
-// Add back button to about view
-function addBackButton() {
-    let backButton = document.getElementById('backButton');
-    if (!backButton) {
-        backButton = document.createElement('button');
-        backButton.id = 'backButton';
-        backButton.className = 'back-button';
+// Render About Bio Text
+function renderAboutBio() {
+    const bioContainer = document.getElementById('aboutBioText');
+    if (!bioContainer) return;
 
-        // Set button text based on current language
-        const buttonText = siteData[currentLanguage]?.backButtonText || '← Back to Home';
-        backButton.textContent = buttonText;
+    // Get the bio text based on current language
+    const bioText = siteData[currentLanguage]?.longBio || '';
 
-        backButton.addEventListener('click', () => {
-            switchToView('home');
-        });
-        document.body.appendChild(backButton);
+    if (bioText) {
+        bioContainer.innerHTML = `<p class="bio-paragraph">${bioText}</p>`;
+        console.log("About bio rendered successfully.");
     } else {
-        // Update existing button text if language changed
-        const buttonText = siteData[currentLanguage]?.backButtonText || '← Back to Home';
-        backButton.textContent = buttonText;
-    }
-}
-
-// Remove back button
-function removeBackButton() {
-    const backButton = document.getElementById('backButton');
-    if (backButton) {
-        backButton.remove();
+        console.warn("Bio text not found for language:", currentLanguage);
     }
 }
 
@@ -1097,6 +1454,15 @@ class FloatingTag {
             this.element.style.transform = `translate(${parallaxX}px, ${parallaxY}px)`;
         }
     }
+
+    updateData(newData) {
+        this.data = newData;
+        this.label = typeof newData === 'string' ? newData : newData.label;
+        if (this.element) {
+            this.element.textContent = this.label;
+        }
+        // Position and Velocity remain untouched!
+    }
 }
 
 // Initialize floating tags
@@ -1105,15 +1471,39 @@ let floatingTags = [];
 function initializeFloatingTags(tagsData) {
     const container = document.getElementById('floatingTagsContainer');
 
-    // Clear the container completely - this is crucial!
-    if (container) {
-        container.innerHTML = '';
-    }
-
     // Use the passed tagsData instead of reading from global
     if (container && tagsData && Array.isArray(tagsData)) {
-        floatingTags = tagsData.map(tagData => new FloatingTag(tagData, container));
-        console.log(`Initialized ${floatingTags.length} tags for language: ${currentLanguage}`);
+        // Check if we already have tags (language switch scenario)
+        if (floatingTags.length > 0) {
+            // Update existing tags without changing their positions
+            floatingTags.forEach((tag, index) => {
+                if (index < tagsData.length) {
+                    tag.updateData(tagsData[index]);
+                }
+            });
+
+            // Handle case where new language has more tags than current
+            if (tagsData.length > floatingTags.length) {
+                for (let i = floatingTags.length; i < tagsData.length; i++) {
+                    const newTag = new FloatingTag(tagsData[i], container);
+                    floatingTags.push(newTag);
+                }
+            }
+
+            // Handle case where new language has fewer tags than current
+            if (tagsData.length < floatingTags.length) {
+                for (let i = tagsData.length; i < floatingTags.length; i++) {
+                    floatingTags[i].element.remove();
+                }
+                floatingTags.length = tagsData.length;
+            }
+
+            console.log(`Updated ${floatingTags.length} tags for language: ${currentLanguage}`);
+        } else {
+            // First load - create new tags
+            floatingTags = tagsData.map(tagData => new FloatingTag(tagData, container));
+            console.log(`Initialized ${floatingTags.length} tags for language: ${currentLanguage}`);
+        }
     } else {
         console.warn('Could not initialize floating tags - container or tags data missing');
         floatingTags = [];
@@ -1162,6 +1552,11 @@ function initializeTypewriter() {
 
     if (!typewriterText || !introTextData || !Array.isArray(introTextData)) {
         return;
+    }
+
+    // Clear any existing typewriter timeout to prevent conflicts
+    if (typewriterTimeout) {
+        clearTimeout(typewriterTimeout);
     }
 
     let textIndex = 0;
